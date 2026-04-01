@@ -28,7 +28,6 @@ function CityGrid() {
     const cellW = canvas.offsetWidth / cols;
     const cellH = canvas.offsetHeight / rows;
 
-    // Pre-generate buildings
     const buildings = Array.from({ length: cols * rows }, (_, i) => ({
       col: i % cols,
       row: Math.floor(i / cols),
@@ -47,16 +46,13 @@ function CityGrid() {
         const pulse = Math.sin(t * 0.001 * b.speed + b.phase) * 0.3 + 0.7;
         const alpha = 0.04 + (b.lit ? 0.08 * pulse : 0.02);
 
-        // Building block
         ctx.fillStyle = `hsla(191, 100%, 50%, ${alpha})`;
         ctx.fillRect(x + 2, y + 2, cellW - 4, cellH - 4);
 
-        // Building border
         ctx.strokeStyle = `hsla(191, 100%, 50%, ${alpha * 0.6})`;
         ctx.lineWidth = 0.5;
         ctx.strokeRect(x + 2, y + 2, cellW - 4, cellH - 4);
 
-        // Lit window dots
         if (b.lit && pulse > 0.8) {
           ctx.fillStyle = `hsla(191, 100%, 70%, ${0.3 * pulse})`;
           ctx.fillRect(x + cellW * 0.3, y + cellH * 0.3, 2, 2);
@@ -64,7 +60,6 @@ function CityGrid() {
         }
       });
 
-      // Scan line
       const scanY = ((t * 0.03) % (canvas.offsetHeight + 40)) - 20;
       const grad = ctx.createLinearGradient(0, scanY - 20, 0, scanY + 20);
       grad.addColorStop(0, "hsla(191, 100%, 50%, 0)");
@@ -115,7 +110,6 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated city grid visualization */}
       <CityGrid />
 
       {/* Grid lines overlay */}
@@ -150,10 +144,6 @@ const LandingPage = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20">
-            <div className="w-2 h-2 rounded-full bg-accent neon-pulse" />
-            <span className="text-xs font-medium text-accent">Demo Mode Active</span>
-          </div>
           <button
             onClick={handleLaunch}
             className="flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/30 text-accent text-sm font-semibold hover:bg-accent/20 transition-colors"

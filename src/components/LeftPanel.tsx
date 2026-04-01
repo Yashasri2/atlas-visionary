@@ -1,4 +1,4 @@
-import { Layers, Car, Users, Trees, Wind, Activity, TrendingUp, Droplets } from "lucide-react";
+import { Layers, Car, Users, Trees, Wind, Activity } from "lucide-react";
 import type { CityData } from "@/data/cities";
 
 interface LeftPanelProps {
@@ -8,10 +8,10 @@ interface LeftPanelProps {
 }
 
 const layers = [
-  { key: "traffic", label: "Traffic", icon: Car, color: "text-yellow-400" },
-  { key: "population", label: "Population", icon: Users, color: "text-accent-2" },
-  { key: "landUse", label: "Land Use", icon: Layers, color: "text-purple-400" },
-  { key: "pollution", label: "Pollution", icon: Wind, color: "text-violet-400" },
+  { key: "traffic", label: "Traffic", icon: Car, color: "text-yellow-400", source: "TomTom Traffic Index 2024" },
+  { key: "population", label: "Population", icon: Users, color: "text-accent-2", source: "Census of India 2011 (projected)" },
+  { key: "landUse", label: "Land Use", icon: Layers, color: "text-purple-400", source: "ISRO LULC / Municipal Master Plans" },
+  { key: "pollution", label: "Pollution", icon: Wind, color: "text-violet-400", source: "CPCB / WAQI Real-time AQI" },
 ];
 
 const LeftPanel = ({ city, activeLayers, onToggleLayer }: LeftPanelProps) => {
@@ -73,32 +73,63 @@ const LeftPanel = ({ city, activeLayers, onToggleLayer }: LeftPanelProps) => {
             <button
               key={layer.key}
               onClick={() => onToggleLayer(layer.key)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 ${
+              className={`w-full flex flex-col px-3 py-2.5 rounded-xl transition-all duration-200 ${
                 activeLayers[layer.key]
                   ? "bg-accent/10 border border-accent/30"
                   : "bg-muted/20 border border-transparent hover:bg-muted/40"
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <layer.icon size={16} className={activeLayers[layer.key] ? "text-accent" : "text-muted-foreground"} />
-                <span className={`text-sm font-medium ${activeLayers[layer.key] ? "text-foreground" : "text-muted-foreground"}`}>
-                  {layer.label}
-                </span>
-              </div>
-              <div
-                className={`w-9 h-5 rounded-full transition-colors relative ${
-                  activeLayers[layer.key] ? "bg-accent" : "bg-muted"
-                }`}
-              >
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2.5">
+                  <layer.icon size={16} className={activeLayers[layer.key] ? "text-accent" : "text-muted-foreground"} />
+                  <span className={`text-sm font-medium ${activeLayers[layer.key] ? "text-foreground" : "text-muted-foreground"}`}>
+                    {layer.label}
+                  </span>
+                </div>
                 <div
-                  className={`w-4 h-4 rounded-full bg-foreground absolute top-0.5 transition-transform ${
-                    activeLayers[layer.key] ? "translate-x-4" : "translate-x-0.5"
+                  className={`w-9 h-5 rounded-full transition-colors relative ${
+                    activeLayers[layer.key] ? "bg-accent" : "bg-muted"
                   }`}
-                />
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full bg-foreground absolute top-0.5 transition-transform ${
+                      activeLayers[layer.key] ? "translate-x-4" : "translate-x-0.5"
+                    }`}
+                  />
+                </div>
               </div>
+              {activeLayers[layer.key] && (
+                <span className="text-[9px] text-muted-foreground mt-1 ml-6">
+                  Source: {layer.source}
+                </span>
+              )}
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Data Sources */}
+      <div className="hud-card">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+          Data Sources
+        </h3>
+        <ul className="space-y-1.5">
+          <li className="text-[10px] text-muted-foreground leading-relaxed">
+            📊 Population — Census of India 2011, UN World Urbanization Prospects 2024
+          </li>
+          <li className="text-[10px] text-muted-foreground leading-relaxed">
+            🌫️ AQI — Central Pollution Control Board (CPCB), WAQI.info
+          </li>
+          <li className="text-[10px] text-muted-foreground leading-relaxed">
+            🚗 Traffic — TomTom Traffic Index 2024
+          </li>
+          <li className="text-[10px] text-muted-foreground leading-relaxed">
+            🗺️ Land Use — ISRO Bhuvan LULC, Municipal Master Plans
+          </li>
+          <li className="text-[10px] text-muted-foreground leading-relaxed">
+            🌿 Green Cover — Forest Survey of India (FSI) 2023
+          </li>
+        </ul>
       </div>
 
       {/* Economic Snapshot */}

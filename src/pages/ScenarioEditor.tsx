@@ -19,7 +19,7 @@ const ScenarioEditor = () => {
     features, addFeature, undo, redo, clearFeatures,
     undoStack, redoStack,
     insights, setInsights, isComputingInsights, setIsComputingInsights,
-    whatIf, aiPlanApplied, setAiPlanApplied,
+    aiPlanApplied, setAiPlanApplied,
     setScenarioCity,
   } = useScenarioStore();
 
@@ -29,7 +29,7 @@ const ScenarioEditor = () => {
     setScenarioCity(city);
   }, [city, setScenarioCity]);
 
-  // Debounced AI recomputation on feature or whatIf changes
+  // Debounced AI recomputation on feature changes
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -43,7 +43,6 @@ const ScenarioEditor = () => {
         currentAqi: city.aqi,
         currentTrafficIndex: city.trafficIndex,
         features,
-        whatIf,
       };
       try {
         const result = await computeUrbanInsights(input);
@@ -58,7 +57,7 @@ const ScenarioEditor = () => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [features, whatIf, city, setInsights, setIsComputingInsights]);
+  }, [features, city, setInsights, setIsComputingInsights]);
 
   const handleDrawComplete = useCallback(() => {
     setActiveTool(null);

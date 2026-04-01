@@ -9,13 +9,6 @@ export interface ScenarioFeature {
   timestamp: number;
 }
 
-export interface WhatIfScenario {
-  evAdoption: number;       // 0-100
-  droneDelivery: number;    // 0-100
-  workFromHome: number;     // 0-100
-  metroExpansion: number;   // 0-100
-}
-
 interface ScenarioState {
   // Drawn features
   features: ScenarioFeature[];
@@ -32,10 +25,6 @@ interface ScenarioState {
   setInsights: (i: UrbanInsights | null) => void;
   isComputingInsights: boolean;
   setIsComputingInsights: (v: boolean) => void;
-
-  // What-If
-  whatIf: WhatIfScenario;
-  setWhatIf: (partial: Partial<WhatIfScenario>) => void;
 
   // AI plan injection
   aiPlanApplied: boolean;
@@ -113,21 +102,11 @@ export const useScenarioStore = create<ScenarioState>((set, get) => ({
   isComputingInsights: false,
   setIsComputingInsights: (v) => set({ isComputingInsights: v }),
 
-  whatIf: {
-    evAdoption: 0,
-    droneDelivery: 0,
-    workFromHome: 0,
-    metroExpansion: 0,
-  },
-  setWhatIf: (partial) =>
-    set((s) => ({ whatIf: { ...s.whatIf, ...partial } })),
-
   aiPlanApplied: false,
   setAiPlanApplied: (v) => set({ aiPlanApplied: v }),
 
   applyAiPlan: (city) => {
     const state = get();
-    // Convert AI recommendations into drawable features
     const center = city.coordinates;
     const zonePoly: ScenarioFeature = {
       id: `feat-${++featureCounter}`,
