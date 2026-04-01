@@ -5,7 +5,7 @@
  */
 
 import { supabase } from "@/integrations/supabase/client";
-import type { ScenarioFeature, WhatIfScenario } from "@/stores/scenarioStore";
+import type { ScenarioFeature } from "@/stores/scenarioStore";
 
 export interface UrbanInsights {
   zoning_suggestions: string[];
@@ -35,7 +35,6 @@ export interface UrbanEngineInput {
   currentAqi: number;
   currentTrafficIndex: number;
   features: ScenarioFeature[];
-  whatIf: WhatIfScenario;
 }
 
 export async function computeUrbanInsights(
@@ -64,18 +63,8 @@ function getFallbackInsights(input: UrbanEngineInput): UrbanInsights {
   const roadCount = input.features.filter((f) => f.type === "road").length;
   const greenCount = input.features.filter((f) => f.type === "green").length;
 
-  const congestionDelta =
-    -roadCount * 8 -
-    input.whatIf.evAdoption * 0.05 -
-    input.whatIf.workFromHome * 0.15 -
-    input.whatIf.metroExpansion * 0.12 +
-    input.whatIf.droneDelivery * 0.02;
-
-  const pollutionDelta =
-    -greenCount * 12 -
-    input.whatIf.evAdoption * 0.25 +
-    input.whatIf.droneDelivery * 0.01 -
-    input.whatIf.workFromHome * 0.08;
+  const congestionDelta = -roadCount * 8;
+  const pollutionDelta = -greenCount * 12;
 
   const feedback: UrbanInsights["feedback"] = [];
   if (zoneCount > 0)
@@ -92,11 +81,6 @@ function getFallbackInsights(input: UrbanEngineInput): UrbanInsights {
     feedback.push({
       type: "success",
       text: `${greenCount} green space(s) projected to reduce PM2.5 by ~${(greenCount * 12).toFixed(0)}% locally.`,
-    });
-  if (input.whatIf.evAdoption > 30)
-    feedback.push({
-      type: "info",
-      text: `${input.whatIf.evAdoption}% EV adoption reduces pollution index by ${(input.whatIf.evAdoption * 0.25).toFixed(1)}%.`,
     });
   if (feedback.length === 0)
     feedback.push({ type: "info", text: "Draw features on the map to see live analysis." });

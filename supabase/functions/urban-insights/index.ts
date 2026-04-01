@@ -19,7 +19,7 @@ serve(async (req) => {
 
     const input = await req.json();
 
-    const systemPrompt = `You are an urban planning analytics engine. Given city data and proposed map features (zoning polygons, road segments, green spaces) plus what-if scenario parameters, compute structured impact metrics.
+    const systemPrompt = `You are an urban planning analytics engine. Given city data and proposed map features (zoning polygons, road segments, green spaces), compute structured impact metrics.
 
 RESPOND ONLY with a JSON object using this exact schema — no markdown, no explanation:
 {
@@ -43,13 +43,10 @@ Rules:
 - Each zoning polygon drawn increases density in that area
 - Road segments improve connectivity, reduce congestion
 - Green spaces reduce PM2.5 and improve livability
-- EV adoption reduces pollution, slightly reduces congestion
-- Drone delivery reduces road congestion, increases airspace risk
-- Work from home reduces CBD congestion, lowers commercial density
-- Metro expansion improves connectivity, increases property values nearby
 - If any zone overlaps coordinates near a river (lat within 0.005 of water bodies), add a flood risk warning
 - Generate 2-4 feedback items based on what changed
-- All numbers must be realistic and proportional to city size`;
+- All numbers must be realistic and proportional to city size
+- Use real-world benchmarks: AQI from CPCB standards, traffic from TomTom methodology, population from Census projections`;
 
     const userPrompt = JSON.stringify({
       city: input.cityName,
@@ -64,7 +61,6 @@ Rules:
         green: input.features?.filter((f: any) => f.type === "green").length || 0,
       },
       features_geojson: input.features?.map((f: any) => f.geojson) || [],
-      what_if: input.whatIf,
     });
 
     const response = await fetch(
@@ -107,7 +103,6 @@ Rules:
     const aiData = await response.json();
     const content = aiData.choices?.[0]?.message?.content || "";
 
-    // Parse JSON from the response (handle possible markdown wrapping)
     let parsed;
     try {
       const jsonStr = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
