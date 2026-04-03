@@ -195,3 +195,20 @@
   color: hsl(var(--muted-foreground)) !important;
   font-size: 10px !important;
 }
+
+/* Data layer tooltip labels */
+.density-label,
+.aqi-label,
+.landuse-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  padding: 0 !important;
+}
+.density-label::before,
+.aqi-label::before,
+.landuse-label::before {
+  display: none !important;
+}
